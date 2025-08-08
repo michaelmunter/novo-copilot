@@ -1,0 +1,43 @@
+@import 'tailwindcss';
+
+/* Define theme colors */
+@layer base {
+  :root {
+    font-family: 'Noto Sans', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans SC',
+      'Noto Sans TC', 'Noto Sans HK', 'noto-sans-hebrew', 'noto-sans-arabic',
+      'noto-sans', 'Arial', 'sans-serif';
+
+    /* Light mode */
+    --bg-primary: rgb(255, 255, 255);
+    --bg-secondary: rgb(249, 250, 251);
+    --text-primary: rgb(17, 24, 39);
+    --text-secondary: rgb(107, 114, 128);
+    --border: rgb(229, 231, 235);
+    --accent: rgb(0, 25, 101);
+    --accent-hover: rgb(0, 77, 153);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      /* Dark mode */
+      --bg-primary: rgb(17, 24, 39);
+      --bg-secondary: rgb(31, 41, 55);
+      --text-primary: rgb(243, 244, 246);
+      --text-secondary: rgb(156, 163, 175);
+      --border: rgb(55, 65, 81);
+      --accent: rgb(77, 148, 255);
+      --accent-hover: rgb(0, 25, 101);
+    }
+  }
+}
+
+/* Make CSS variables available as Tailwind classes */
+@theme {
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+}
