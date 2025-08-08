@@ -125,6 +125,12 @@ export default function Search({
     setTimeout(() => closeMenu(), 0)
   }
 
+  useEffect(() => {
+    const onPop = () => setOpen(false) // close on URL/back/forward too
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
+
   // click-away
   useEffect(() => {
     const handler = (e: MouseEvent) => {
