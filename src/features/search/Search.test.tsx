@@ -3,10 +3,10 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Search from './Search'
 import { hcpMockService } from './mock'
-import { vi } from 'vitest'
+import { vi, expect, it } from 'vitest'
 
 function setup(onSearch = vi.fn()) {
-  render(<Search onSearch={onSearch} service={hcpMockService} />)
+  render(<Search onSearch={onSearch} hcpService={hcpMockService} />)
   const input = screen.getByRole('combobox', { name: /search/i })
   const button = screen.getByRole('button', { name: /search/i })
   return { input, button, onSearch }

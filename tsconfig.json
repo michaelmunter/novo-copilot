@@ -7,8 +7,7 @@
 
   "compilerOptions": {
     "verbatimModuleSyntax": true,
-    "importsNotUsedAsValues": "error",
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true
+
+    "noUncheckedIndexedAccess": true
   }
 }

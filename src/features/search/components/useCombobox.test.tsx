@@ -1,7 +1,7 @@
 // features/search/components/useCombobox.test.tsx
 import { renderHook, act } from '@testing-library/react'
 import { useCombobox, type ComboboxFetcher } from './useCombobox'
-import { vi } from 'vitest'
+import { vi, expect, it } from 'vitest'
 
 function makeFetcher(results: string[], delay = 0): ComboboxFetcher<string> {
   return (q, opts) =>

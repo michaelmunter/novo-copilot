@@ -1,21 +1,21 @@
-import { useEffect } from 'react'
-import { useHcpSuggestions } from './components/useHcpSuggestions'
+import { useSearchController } from './useSearchController'
 import Suggestions from './components/Suggestions'
 import { buildQueryFromHcp } from './formatters'
-import { getQueryParam, setQueryParam } from '../../shared/lib/url'
 import type { HcpService } from './service'
 import { hcpMockService } from './mock' // optional, since useHcpSuggestions has a default
 
 type Props = {
   onSearch: (query: string) => void
-  service?: HcpService
+  onCommand?: (name: 'read_briefing') => void // <-- NEW (optional)
+  hcpService?: HcpService
   territoryFilter?: string[] | null
   showNpiInSuggestion?: boolean
 }
 
 export default function Search({
   onSearch,
-  service,
+  onCommand,
+  hcpService,
   territoryFilter = null,
   showNpiInSuggestion = false,
 }: Props) {
@@ -31,29 +31,16 @@ export default function Search({
     ignoreBlurRef,
     onKeyDown,
     onBlur,
-    closeMenu,
-  } = useHcpSuggestions(service ?? hcpMockService, territoryFilter)
-
-  useEffect(() => {
-    const q = getQueryParam('q')
-    setQuery(q)
-    if (q) onSearch(q)
-  }, [onSearch, setQuery])
-
-  const commitSearch = (q: string) => {
-    const query = q.trim()
-    setQueryParam('q', query)
-    onSearch(query)
-    closeMenu()
-    setTimeout(() => inputRef.current?.blur(), 0)
-  }
-
-  const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault()
-    commitSearch(query)
-  }
-
-  const activeId = highlight >= 0 ? `opt-${highlight}` : undefined
+    onFocus,
+    onSubmit,
+    activeId,
+    commitSearch,
+  } = useSearchController({
+    onSearch,
+    onCommand,
+    hcpService: hcpService ?? hcpMockService,
+    territoryFilter,
+  })
 
   return (
     <section className="relative">
@@ -71,7 +58,7 @@ export default function Search({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={onKeyDown}
-              onFocus={() => items.length && (open || setHighlight(0))}
+              onFocus={onFocus}
               onBlur={onBlur}
               placeholder="Search by name, specialty, or location"
               autoFocus
@@ -88,9 +75,7 @@ export default function Search({
               onPick={(h) => {
                 // prevent blur from closing first
                 ignoreBlurRef.current = true
-                const q = buildQueryFromHcp(h)
-                setQuery(q)
-                commitSearch(q)
+                commitSearch(buildQueryFromHcp(h))
                 ignoreBlurRef.current = false
               }}
             />

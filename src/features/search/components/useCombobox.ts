@@ -16,6 +16,7 @@ export type UseComboboxOptions<T> = {
 
 export function useCombobox<T>(opts: UseComboboxOptions<T>) {
   const { fetcher, minChars = 2, limit = 8, debounceMs = 250, filter } = opts
+  const [focused, setFocused] = useState(false) // <-- NEW
 
   // state
   const [query, setQuery] = useState('')
@@ -53,7 +54,7 @@ export function useCombobox<T>(opts: UseComboboxOptions<T>) {
         let next = await fetcher(q, { limit, signal: abortRef.current.signal })
         if (filter) next = filter(next, q)
         setItems(next)
-        setOpen(next.length > 0)
+        setOpen(focused && next.length > 0)
         setHighlight(next.length ? 0 : -1)
       } catch {
         /* ignore AbortError */
@@ -116,7 +117,13 @@ export function useCombobox<T>(opts: UseComboboxOptions<T>) {
       ignoreBlurRef.current = false
       return
     }
+    setFocused(false)
     setTimeout(() => closeMenu(), 0)
+  }
+
+  const onFocus: React.FocusEventHandler<HTMLInputElement> = () => {
+    setFocused(true)
+    if (items.length) setOpen(true)
   }
 
   return {
@@ -134,6 +141,7 @@ export function useCombobox<T>(opts: UseComboboxOptions<T>) {
     // events
     onKeyDown,
     onBlur,
+    onFocus,
     // controls
     closeMenu,
   }

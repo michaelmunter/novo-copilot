@@ -9,19 +9,25 @@ export default function App() {
     name?: string
     info?: string
   } | null>(null)
+  const [readNowTick, setReadNowTick] = useState(0)
 
   const handleSearch = (query: string) => {
     if (!query.trim()) return setBriefingData(null)
-    // TODO: replace with real fetch of briefing by parsed query
     setBriefingData({ name: query, info: 'Sample briefing data' })
+  }
+
+  const handleCommand = (name: 'read_briefing') => {
+    if (name === 'read_briefing' && briefingData) {
+      setReadNowTick((n) => n + 1) // triggers Briefing to speak
+    }
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-bg-primary text-text-primary">
       <Header />
       <main className="flex-1 container mx-auto px-4 py-6 space-y-6">
-        <Search onSearch={handleSearch} />
-        <Briefing data={briefingData} />
+        <Search onSearch={handleSearch} onCommand={handleCommand} />
+        <Briefing data={briefingData} readNowSignal={readNowTick} />
       </main>
     </div>
   )

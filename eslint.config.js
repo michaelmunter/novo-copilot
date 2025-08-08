@@ -9,11 +9,14 @@ export default tseslint.config([
   globalIgnores(['dist']),
   {
     files: ['**/*.{ts,tsx}'],
+    plugins: ['testing-library', 'jest-dom'],
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,
       reactHooks.configs['recommended-latest'],
       reactRefresh.configs.vite,
+      'plugin:testing-library/react',
+      'plugin:jest-dom/recommended',
     ],
     languageOptions: {
       ecmaVersion: 2020,
@@ -32,5 +35,15 @@ export default tseslint.config([
       '@typescript-eslint/no-unused-vars': 'warn',
       'no-console': 'warn',
     },
+    overrides: [
+      {
+        files: ['**/*.test.{ts,tsx}', '**/__tests__/**/*.{ts,tsx}'],
+        rules: {
+          // Example tweaks, optional:
+          'testing-library/no-node-access': 'off',
+          'testing-library/no-container': 'off',
+        },
+      },
+    ],
   },
 ])
