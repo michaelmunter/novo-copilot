@@ -20,6 +20,7 @@ export default function Search({
   showNpiInSuggestion = false,
 }: Props) {
   const api = useMemo(() => service ?? hcpMockService, [service])
+  // --- state & refs ---
   const [search, setSearch] = useState('')
   const [open, setOpen] = useState(false)
   const [items, setItems] = useState<Hcp[]>([])
@@ -27,8 +28,15 @@ export default function Search({
 
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
+  const ignoreBlurRef = useRef(false) // NEW: prevents blur during list click
   const abortRef = useRef<AbortController | null>(null)
   const debounceRef = useRef<number | null>(null)
+
+  // helpers
+  const closeMenu = () => {
+    setOpen(false)
+    setHighlight(-1)
+  }
 
   // hydrate from URL (?q=) once
   useEffect(() => {
@@ -37,11 +45,6 @@ export default function Search({
     if (q) onSearch(q)
   }, [])
 
-  const closeMenu = () => {
-    setOpen(false)
-    setHighlight(-1)
-  }
-
   const commitSearch = (q: string) => {
     const query = q.trim()
     setQueryParam('q', query)
@@ -49,6 +52,20 @@ export default function Search({
     closeMenu()
     setTimeout(() => inputRef.current?.blur(), 0) // you chose blur, good call
   }
+
+  useEffect(() => {
+    const handler = (e: PointerEvent) => {
+      const t = e.target as Node
+      const clickedInput = !!inputRef.current && inputRef.current.contains(t)
+      const clickedList = !!listRef.current && listRef.current.contains(t)
+      if (!clickedInput && !clickedList) closeMenu()
+    }
+    document.addEventListener('pointerdown', handler, { capture: true })
+    return () =>
+      document.removeEventListener('pointerdown', handler, {
+        capture: true,
+      } as any)
+  }, [])
 
   // debounced suggestions with cancellation
   // suggestions effect: simplify, no loading/empty toggles
@@ -122,11 +139,16 @@ export default function Search({
   }
 
   const onBlur: React.FocusEventHandler<HTMLInputElement> = () => {
+    if (ignoreBlurRef.current) {
+      // NEW: allow list click to pass first
+      ignoreBlurRef.current = false
+      return
+    }
     setTimeout(() => closeMenu(), 0)
   }
 
   useEffect(() => {
-    const onPop = () => setOpen(false) // close on URL/back/forward too
+    const onPop = () => closeMenu()
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
   }, [])
@@ -146,12 +168,6 @@ export default function Search({
     document.addEventListener('pointerdown', handler)
     return () => document.removeEventListener('pointerdown', handler)
   }, [])
-
-  const onPick = (h: Hcp) => {
-    const q = buildQueryFromHcp(h)
-    setSearch(q)
-    commitSearch(q)
-  }
 
   const activeId = highlight >= 0 ? `opt-${highlight}` : undefined
 
@@ -195,13 +211,19 @@ export default function Search({
                       role="option"
                       aria-selected={selected}
                       onMouseDown={(e) => {
+                        // NEW: prevent blur from firing first
                         e.preventDefault()
-                        onPick(h)
+                        ignoreBlurRef.current = true
+                      }}
+                      onClick={() => {
+                        // NEW: do selection on click
+                        const q = buildQueryFromHcp(h)
+                        setSearch(q)
+                        commitSearch(q)
+                        ignoreBlurRef.current = false
                       }}
                       onMouseEnter={() => setHighlight(i)}
-                      className={`px-3 py-2 cursor-pointer ${
-                        selected ? 'bg-bg-primary' : ''
-                      }`}
+                      className={`px-3 py-2 cursor-pointer ${selected ? 'bg-bg-primary' : ''}`}
                     >
                       <div className="truncate">
                         <span className="font-medium">
