@@ -3,18 +3,22 @@ import Suggestions from './components/Suggestions'
 import { buildQueryFromHcp } from './formatters'
 import type { HcpService } from './service'
 import { hcpMockService } from './mock' // optional, since useHcpSuggestions has a default
+import type { Brief } from '../briefing/types'
+import { getMockBriefById } from '../briefing/mock'
 
 type Props = {
-  onSearch: (query: string) => void
-  onCommand?: (name: 'read_briefing') => void // <-- NEW (optional)
+  onSearchResult: (
+    query: string,
+    brief?: Brief | null,
+    message?: string
+  ) => void
   hcpService?: HcpService
   territoryFilter?: string[] | null
   showNpiInSuggestion?: boolean
 }
 
 export default function Search({
-  onSearch,
-  onCommand,
+  onSearchResult,
   hcpService,
   territoryFilter = null,
   showNpiInSuggestion = false,
@@ -36,8 +40,7 @@ export default function Search({
     activeId,
     commitSearch,
   } = useSearchController({
-    onSearch,
-    onCommand,
+    onSearchResult,
     hcpService: hcpService ?? hcpMockService,
     territoryFilter,
   })
@@ -62,7 +65,7 @@ export default function Search({
               onBlur={onBlur}
               placeholder="Search by name, specialty, or location"
               autoFocus
-              className="w-full px-3 py-2 rounded-lg border border-border bg-bg-primary text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent"
+              className="w-full px-3 py-2 rounded-lg border bg-bg-input border-border text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent"
             />
 
             <Suggestions
@@ -75,7 +78,9 @@ export default function Search({
               onPick={(h) => {
                 // prevent blur from closing first
                 ignoreBlurRef.current = true
-                commitSearch(buildQueryFromHcp(h))
+                // Load brief via search-layer backend (mock for now)
+                const brief = getMockBriefById(h.id)
+                commitSearch(buildQueryFromHcp(h), brief)
                 ignoreBlurRef.current = false
               }}
             />
@@ -83,9 +88,24 @@ export default function Search({
 
           <button
             type="submit"
-            className="px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-hover"
+            className="px-4 py-2 rounded-lg bg-input text-text-primary hover:text-bg-primary hover:bg-accent"
+            aria-label="Search"
           >
-            Search
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
           </button>
         </div>
       </form>

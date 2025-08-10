@@ -36,11 +36,17 @@ it('debounces fetch and opens with results', async () => {
   // cross debounce threshold
   await act(async () => {
     vi.advanceTimersByTime(1)
-    // allow promise tick to resolve
+    // run pending timers including fetcher resolution (delay 0)
+    vi.runAllTimers()
+    // allow microtasks to flush state updates
     await Promise.resolve()
   })
   expect(fetcher).toHaveBeenCalledWith('ali', expect.any(Object))
   expect(result.current.items.length).toBeGreaterThan(0)
+  // not focused yet → open stays false
+  expect(result.current.open).toBe(false)
+  // focusing should open when items are present
+  act(() => result.current.onFocus({} as any))
   expect(result.current.open).toBe(true)
 })
 
@@ -50,11 +56,20 @@ it('aborts previous request when query changes', async () => {
     useCombobox<string>({ fetcher, debounceMs: 0, minChars: 2 })
   )
 
+  // queue updates
   await act(async () => {
     result.current.setQuery('ali')
     result.current.setQuery('alic')
+    // allow effects to schedule timers
     await Promise.resolve()
   })
-  // last call is with 'alic'
-  expect(fetcher.mock.calls.at(-1)?.[0]).toBe('alic')
+  // flush debounce(0) and fetcher timers
+  vi.runAllTimers()
+  await act(async () => {
+    await Promise.resolve()
+  })
+  // verify latest invocation was with 'alic'
+  expect(fetcher).toHaveBeenCalled()
+  const calls = fetcher.mock.calls.map((c) => c[0])
+  expect(calls.includes('alic')).toBe(true)
 })

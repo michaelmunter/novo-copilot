@@ -1,20 +1,22 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react'
-import { searchIntent } from './searchIntent'
+// simplified: no external command intents; treat input as HCP query
 import { useHcpSuggestions } from './components/useHcpSuggestions'
 import type { HcpService } from './service'
-import { hcpMockService } from './mock'
 import { getQueryParam } from '../../shared/lib/url'
+import type { Brief } from '../briefing/types'
 
 type Params = {
-  onSearch: (query: string) => void
-  onCommand?: (name: 'read_briefing') => void
+  onSearchResult: (
+    query: string,
+    brief?: Brief | null,
+    message?: string
+  ) => void
   hcpService?: HcpService
   territoryFilter?: string[] | null
 }
 
 export function useSearchController({
-  onSearch,
-  onCommand,
+  onSearchResult,
   hcpService,
   territoryFilter = null,
 }: Params) {
@@ -32,15 +34,15 @@ export function useSearchController({
     onBlur,
     onFocus,
     closeMenu,
-  } = useHcpSuggestions(hcpService ?? hcpMockService, territoryFilter)
+  } = useHcpSuggestions(hcpService, territoryFilter)
 
   const didInitRef = useRef(false)
   useEffect(() => {
     if (didInitRef.current) return
     didInitRef.current = true
     const initialQuery = getQueryParam('q')
-    if (initialQuery) onSearch(initialQuery)
-  }, [onSearch])
+    if (initialQuery) onSearchResult(initialQuery)
+  }, [onSearchResult])
 
   const clearUrlQueryReplace = useCallback(() => {
     const params = new URLSearchParams(window.location.search)
@@ -51,28 +53,31 @@ export function useSearchController({
   }, [])
 
   const commitSearch = useCallback(
-    (raw: string) => {
-      const intent = searchIntent(raw)
-      if (intent.type === 'hcp') {
-        const normalized = intent.query.trim()
-        onSearch(normalized)
-      } else {
-        onCommand?.(intent.name)
-      }
+    (raw: string, brief?: Brief | null) => {
+      // stop any ongoing TTS when starting a new search
+      try {
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+          window.speechSynthesis.cancel()
+        }
+      } catch {}
+      const normalized = raw.trim()
+      onSearchResult(normalized, brief)
       closeMenu()
       setQuery('')
       clearUrlQueryReplace()
       setTimeout(() => inputRef.current?.blur(), 0)
     },
-    [onSearch, onCommand, closeMenu, setQuery, clearUrlQueryReplace, inputRef]
+    [onSearchResult, closeMenu, setQuery, clearUrlQueryReplace, inputRef]
   )
 
   const onSubmit: React.FormEventHandler<HTMLFormElement> = useCallback(
     (e) => {
       e.preventDefault()
-      commitSearch(query)
+      // Free-typed submit: no selected brief; emit a no-results message
+      commitSearch(query, null)
+      onSearchResult(query, null, 'No results found')
     },
-    [commitSearch, query]
+    [commitSearch, onSearchResult, query]
   )
 
   const activeId = useMemo(
@@ -102,4 +107,3 @@ export function useSearchController({
     commitSearch,
   }
 }
-

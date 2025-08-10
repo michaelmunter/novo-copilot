@@ -1,6 +1,11 @@
 // features/briefing/useBriefingTTS.ts
+import { useEffect, useRef, useState } from 'react'
+
 export function useBriefingTTS() {
   const synth = typeof window !== 'undefined' ? window.speechSynthesis : null
+  const [speaking, setSpeaking] = useState<boolean>(false)
+  const speakingRef = useRef(false)
+  speakingRef.current = speaking
 
   const pickVoice = () => {
     if (!synth) return null
@@ -31,11 +36,30 @@ export function useBriefingTTS() {
     if (voice) u.voice = voice
     u.rate = 1.0
     u.pitch = 1.0
+    u.onstart = () => setSpeaking(true)
+    u.onend = () => setSpeaking(false)
+    u.onerror = () => setSpeaking(false)
     synth.speak(u)
   }
 
-  const stop = () => synth?.cancel()
-  const isSpeaking = () => !!synth && synth.speaking
+  const stop = () => {
+    if (!synth) return
+    synth.cancel()
+    setSpeaking(false)
+  }
 
-  return { speak, stop, isSpeaking }
+  // keep React state in sync if something external interrupts TTS
+  useEffect(() => {
+    if (!synth) return
+    let raf = 0
+    const tick = () => {
+      const now = synth.speaking
+      if (now !== speakingRef.current) setSpeaking(now)
+      raf = window.requestAnimationFrame(tick)
+    }
+    raf = window.requestAnimationFrame(tick)
+    return () => window.cancelAnimationFrame(raf)
+  }, [synth])
+
+  return { speak, stop, isSpeaking: speaking }
 }

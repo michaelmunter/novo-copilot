@@ -5,29 +5,35 @@ import { Briefing } from './features/briefing'
 import './App.css'
 
 export default function App() {
-  const [briefingData, setBriefingData] = useState<{
-    name?: string
-    info?: string
-  } | null>(null)
-  const [readNowTick, setReadNowTick] = useState(0)
+  const [briefingData, setBriefingData] = useState<any | null>(null)
+  // Retained TTS controls are handled inside Briefing; remove external trigger
 
-  const handleSearch = (query: string) => {
-    if (!query.trim()) return setBriefingData(null)
-    setBriefingData({ name: query, info: 'Sample briefing data' })
-  }
-
-  const handleCommand = (name: 'read_briefing') => {
-    if (name === 'read_briefing' && briefingData) {
-      setReadNowTick((n) => n + 1) // triggers Briefing to speak
+  const handleSearchResult = (
+    _query: string,
+    brief?: any | null,
+    message?: string
+  ) => {
+    if (message) {
+      setBriefingData({ errorMessage: message })
+      return
     }
+    setBriefingData(brief ?? null)
   }
+
+  // TTS can be triggered directly from Briefing via its button; no external command wiring needed
 
   return (
     <div className="min-h-screen flex flex-col bg-bg-primary text-text-primary">
       <Header />
       <main className="flex-1 container mx-auto px-4 py-6 space-y-6">
-        <Search onSearch={handleSearch} onCommand={handleCommand} />
-        <Briefing data={briefingData} readNowSignal={readNowTick} />
+        <Search onSearchResult={handleSearchResult} />
+        {briefingData?.errorMessage ? (
+          <section className="rounded-xl p-4 text-text-secondary">
+            {briefingData.errorMessage}
+          </section>
+        ) : briefingData ? (
+          <Briefing data={briefingData} />
+        ) : null}
       </main>
     </div>
   )

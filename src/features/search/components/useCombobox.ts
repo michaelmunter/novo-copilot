@@ -12,14 +12,23 @@ export type UseComboboxOptions<T> = {
   debounceMs?: number
   /** optional: filter results client-side before display */
   filter?: (items: T[], query: string) => T[]
+  /** optional: initial query value */
+  initialQuery?: string
 }
 
 export function useCombobox<T>(opts: UseComboboxOptions<T>) {
-  const { fetcher, minChars = 2, limit = 8, debounceMs = 250, filter } = opts
+  const {
+    fetcher,
+    minChars = 2,
+    limit = 8,
+    debounceMs = 250,
+    filter,
+    initialQuery = '',
+  } = opts
   const [focused, setFocused] = useState(false) // <-- NEW
 
   // state
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState(initialQuery)
   const [items, setItems] = useState<T[]>([])
   const [open, setOpen] = useState(false)
   const [highlight, setHighlight] = useState(-1)
