@@ -38,7 +38,7 @@ export default function Briefing({
   }, [ttsTrigger]) // intentionally not depending on "data" to avoid surprise re-reads
 
   return (
-    <section className="bg-bg-secondary border border-border rounded-xl p-4 shadow-sm">
+    <section className="flex-1 space-y-6 w-full max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-lg font-semibold">HCP Intelligence Briefing</h2>
         <div>
@@ -49,13 +49,13 @@ export default function Briefing({
             }
             aria-pressed={isSpeaking}
             aria-label={isSpeaking ? 'Stop reading' : 'Read briefing aloud'}
-            className={`px-3 py-1.5 rounded-md  hover:bg-accent hover:text-text-hover `}
+            className={`px-3 py-1.5 rounded-md text-accent dark:text-text-primary hover:bg-accent hover:text-text-hover `}
           >
             {isSpeaking ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                className="w-5 h-5"
+                className="w-6 h-6"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
@@ -72,7 +72,7 @@ export default function Briefing({
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                className="w-5 h-5"
+                className="w-6 h-6"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"

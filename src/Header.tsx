@@ -1,10 +1,32 @@
-export default function Header() {
+import { Search } from './features/search'
+import type { Brief } from './features/briefing/types'
+
+type Props = {
+  handleSearchResult: (
+    query: string,
+    brief?: Brief | null,
+    message?: string
+  ) => void
+  onLogoClick: () => void
+}
+
+export default function Header({ handleSearchResult, onLogoClick }: Props) {
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    onLogoClick()
+  }
+
   return (
-    <header className="border-b border-border bg-bg-secondary">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between text-accent text-logo-color">
-        <a href="/" className="flex items-center font-bold text-xl">
+    <header className="">
+      <div className=" px-4 py-2 grid grid-cols-[auto_auto_1fr] items-center gap-2  text-logo-color">
+        {/* Left: Logo / future sidebar entry */}
+        <a
+          href="/"
+          className="flex items-center text-lg"
+          onClick={handleLogoClick}
+        >
           <svg
-            className="w-8 h-8 mr-2"
+            className="w-6 h-6 mr-2"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 1210 1210"
             aria-hidden="true"
@@ -67,14 +89,45 @@ export default function Header() {
             </g>
           </svg>
           <div className="flex items-baseline">
-            <span className="text-2xl ml-2">N</span>
+            <span className="text-lg ml-2">N</span>
             <span>OVO</span>
-            <span className="text-2xl ml-2">C</span>
+            <span className="text-lg ml-2">C</span>
             <span>O</span>
-            <span className="text-2xl">P</span>
+            <span className="text-lg">P</span>
             <span>ILOT</span>
           </div>
         </a>
+        <div className="flex justify-end">
+          <button
+            type="button"
+            aria-label="Settings"
+            className="p-2 rounded-md hover:bg-accent hover:text-text-hover transition-all duration-200"
+          >
+            <svg
+              stroke="currentColor"
+              fill="none"
+              strokeWidth="32"
+              viewBox="0 0 512 512"
+              height="24px"
+              width="24px"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="32"
+                d="M262.29 192.31a64 64 0 1 0 57.4 57.4 64.13 64.13 0 0 0-57.4-57.4zM416.39 256a154.34 154.34 0 0 1-1.53 20.79l45.21 35.46a10.81 10.81 0 0 1 2.45 13.75l-42.77 74a10.81 10.81 0 0 1-13.14 4.59l-44.9-18.08a16.11 16.11 0 0 0-15.17 1.75A164.48 164.48 0 0 1 325 400.8a15.94 15.94 0 0 0-8.82 12.14l-6.73 47.89a11.08 11.08 0 0 1-10.68 9.17h-85.54a11.11 11.11 0 0 1-10.69-8.87l-6.72-47.82a16.07 16.07 0 0 0-9-12.22 155.3 155.3 0 0 1-21.46-12.57 16 16 0 0 0-15.11-1.71l-44.89 18.07a10.81 10.81 0 0 1-13.14-4.58l-42.77-74a10.8 10.8 0 0 1 2.45-13.75l38.21-30a16.05 16.05 0 0 0 6-14.08c-.36-4.17-.58-8.33-.58-12.5s.21-8.27.58-12.35a16 16 0 0 0-6.07-13.94l-38.19-30A10.81 10.81 0 0 1 49.48 186l42.77-74a10.81 10.81 0 0 1 13.14-4.59l44.9 18.08a16.11 16.11 0 0 0 15.17-1.75A164.48 164.48 0 0 1 187 111.2a15.94 15.94 0 0 0 8.82-12.14l6.73-47.89A11.08 11.08 0 0 1 213.23 42h85.54a11.11 11.11 0 0 1 10.69 8.87l6.72 47.82a16.07 16.07 0 0 0 9 12.22 155.3 155.3 0 0 1 21.46 12.57 16 16 0 0 0 15.11 1.71l44.89-18.07a10.81 10.81 0 0 1 13.14 4.58l42.77 74a10.8 10.8 0 0 1-2.45 13.75l-38.21 30a16.05 16.05 0 0 0-6.05 14.08c.33 4.14.55 8.3.55 12.47z"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        {/* Search container that takes full remaining width and centers content */}
+        <div className="flex justify-center">
+          <div className="w-full max-w-4xl">
+            <Search onSearchResult={handleSearchResult} />
+          </div>
+        </div>
       </div>
     </header>
   )

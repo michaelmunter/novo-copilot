@@ -20,7 +20,7 @@ const Suggestions = forwardRef<HTMLUListElement, Props>(
         role="listbox"
         ref={ref}
         onMouseLeave={() => onHover(-1)}
-        className="absolute z-20 mt-2 w-full max-h-80 overflow-auto rounded-lg border border-border bg-bg-secondary shadow-sm"
+        className="absolute z-20 top-full mt-1 w-full max-h-80 overflow-auto rounded-lg border border-border bg-bg-secondary shadow-sm"
       >
         {items.map((h, i) => {
           const selected = i === highlight
@@ -35,10 +35,10 @@ const Suggestions = forwardRef<HTMLUListElement, Props>(
               }} // let parent ignore blur
               onClick={() => onPick(h)}
               onMouseEnter={() => onHover(i)}
-              className={`px-3 py-2 cursor-pointer ${selected ? 'bg-bg-primary' : ''}`}
+              className={`px-3  py-1 cursor-pointer ${selected ? 'bg-bg-primary' : ''}`}
             >
               <div className="truncate">
-                <span className="font-medium">
+                <span className="">
                   {h.lastName}, {h.firstName}
                 </span>
                 <span className="text-text-secondary">

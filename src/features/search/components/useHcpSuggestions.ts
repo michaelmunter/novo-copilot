@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 import { useCombobox, type ComboboxFetcher } from './useCombobox'
 import type { Hcp } from '../types'
 import type { HcpService } from '../service'
-// import { hcpMockService } from '../mock'
 
 export function useHcpSuggestions(
   service?: HcpService,
