@@ -27,7 +27,7 @@ export default function Sidebar({
   hasBrief = false,
 }: Props) {
   return (
-    <nav aria-label="Briefing sections" className="min-w-[220px]">
+    <nav aria-label="Briefing sections" className="min-w-[200px] text-sm">
       <div className="flex flex-col gap-4">
         {hasBrief && (
           <ul className="flex flex-col gap-1">

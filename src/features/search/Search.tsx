@@ -2,16 +2,16 @@ import { useState } from 'react'
 import { useSearchController } from './useSearchController'
 import Suggestions from './components/Suggestions'
 import { buildQueryFromHcp } from './formatters'
-import { getMockBriefById } from '../briefing/mock'
+import { getMockBriefingById } from '../briefing/mockNew'
 import { hcpMockService } from './mock'
-import type { Brief } from '../briefing/types'
+import type { BriefingData } from '../briefing/types'
 import type { HcpService } from './service'
 import type { Hcp } from './types'
 
 type Props = {
   onSearchResult: (
     query: string,
-    brief?: Brief | null,
+    brief?: BriefingData | null,
     message?: string
   ) => void
   hcpService?: HcpService
@@ -66,10 +66,10 @@ export default function Search({
       aria-label="Search"
       className="flex text-sm flex-1 justify-end"
     >
-      <div className="flex flex-1 gap-0">
+      <div className="flex flex-1 gap-0 ">
         {/* Unified container for input + button to get a single focus ring */}
-        <div className="group max-w-2xl flex flex-1 items-stretch rounded-lg border border-border bg-bg-secondary focus-within:ring-2 focus-within:ring-inset focus-within:ring-accent focus:bg-bg-primary hover:bg-bg-primary relative">
-          <div className="flex-1">
+        <div className="group max-w-2xl flex flex-1 items-stretch rounded-lg border border-border bg-bg-secondary focus-within:ring-2 focus-within:ring-inset focus-within:ring-accent focus:bg-bg-primary hover:bg-bg-primary relative shadow-sm ">
+          <div className="flex-1 ">
             <input
               ref={inputRef}
               role="combobox"
@@ -122,7 +122,7 @@ export default function Search({
               // prevent blur from closing first
               ignoreBlurRef.current = true
               // Load brief via search-layer backend (mock for now)
-              const brief = getMockBriefById(h.id)
+              const brief = getMockBriefingById(h.id)
               commitSearch(buildQueryFromHcp(h), brief)
               ignoreBlurRef.current = false
             }}

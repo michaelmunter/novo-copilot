@@ -35,7 +35,7 @@ const Suggestions = forwardRef<HTMLUListElement, Props>(
               }} // let parent ignore blur
               onClick={() => onPick(h)}
               onMouseEnter={() => onHover(i)}
-              className={`px-3  py-1 cursor-pointer ${selected ? 'bg-bg-primary' : ''}`}
+              className={`px-3  py-2 cursor-pointer ${selected ? 'bg-bg-primary' : ''}`}
             >
               <div className="truncate">
                 <span className="">

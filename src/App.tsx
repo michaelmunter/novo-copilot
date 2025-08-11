@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react'
 import Header from './Header'
 import { Briefing } from './features/briefing'
-import type { Brief } from './features/briefing/types'
+import type { BriefingData } from './features/briefing/types'
 import Sidebar, { type BriefTab } from './features/briefing/Sidebar'
 import {
   getQueryParam,
   setQueryParams,
   clearQueryParams,
 } from './shared/lib/url'
-import { getMockBriefById } from './features/briefing/mock'
+import { getMockBriefingById } from './features/briefing/mockNew'
 import './App.css'
 
 export default function App() {
-  const [briefingData, setBriefingData] = useState<Brief | null>(null)
+  const [currentBriefId, setCurrentBriefId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<BriefTab>('brief')
   const [recentBriefs, setRecentBriefs] = useState<
     Array<{ id: string; label: string }>
@@ -36,7 +36,7 @@ export default function App() {
 
   const handleSearchResult = (
     _query: string,
-    brief?: Brief | null,
+    brief?: BriefingData | null,
     message?: string
   ) => {
     if (message) {
@@ -45,22 +45,21 @@ export default function App() {
     }
     if (!brief) return
 
-    setBriefingData(brief)
+    setCurrentBriefId(brief.id)
     setActiveTab('brief')
-    const id = brief?.hcpId ?? null
-    if (id) {
-      // Set both params at once with hcp first
-      setQueryParams({ hcp: id, tab: 'brief' })
-      const label = brief?.name || brief?.facility?.name || id
-      setRecentBriefs((prev) => {
-        const next = [{ id, label }, ...prev.filter((r) => r.id !== id)]
-        return next.slice(0, 10)
-      })
-    }
+    setQueryParams({ hcp: brief.id, tab: 'brief' })
+    const label = brief.name
+    setRecentBriefs((prev) => {
+      const next = [
+        { id: brief.id, label },
+        ...prev.filter((r) => r.id !== brief.id),
+      ]
+      return next.slice(0, 10)
+    })
   }
 
   const clearBrief = () => {
-    setBriefingData(null)
+    setCurrentBriefId(null)
     setActiveTab('brief')
     clearQueryParams(['hcp', 'tab'])
   }
@@ -70,10 +69,10 @@ export default function App() {
     setActiveTab(tab)
     const id = getQueryParam('hcp')
     if (id) {
-      const brief = getMockBriefById(id)
+      const brief = getMockBriefingById(id)
       if (brief) {
-        setBriefingData(brief)
-        const label = brief.name || brief.facility?.name || id
+        setCurrentBriefId(id)
+        const label = brief.name
         setRecentBriefs((prev) => {
           const exists = prev.some((r) => r.id === id)
           const next = exists
@@ -108,14 +107,14 @@ export default function App() {
           active={activeTab}
           onChange={handleTabChange}
           recents={recentBriefs}
-          hasBrief={!!briefingData}
+          hasBrief={!!currentBriefId}
           onSelectRecent={(id) => {
-            const brief = getMockBriefById(id)
+            const brief = getMockBriefingById(id)
             if (brief) {
-              setBriefingData(brief)
+              setCurrentBriefId(id)
               setActiveTab('brief')
               setQueryParams({ hcp: id, tab: 'brief' })
-              const label = brief.name || brief.facility?.name || id
+              const label = brief.name
               setRecentBriefs((prev) => {
                 const next = [{ id, label }, ...prev.filter((r) => r.id !== id)]
                 return next.slice(0, 10)
@@ -124,8 +123,8 @@ export default function App() {
           }}
         />
         <main className="flex justify-center">
-          {briefingData && activeTab === 'brief' ? (
-            <Briefing data={briefingData} />
+          {currentBriefId && activeTab === 'brief' ? (
+            <Briefing briefId={currentBriefId} />
           ) : null}
         </main>
       </div>

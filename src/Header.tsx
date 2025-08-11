@@ -1,10 +1,10 @@
 import { Search } from './features/search'
-import type { Brief } from './features/briefing/types'
+import type { BriefingData } from './features/briefing/types'
 
 type Props = {
   handleSearchResult: (
     query: string,
-    brief?: Brief | null,
+    brief?: BriefingData | null,
     message?: string
   ) => void
   onLogoClick: () => void
@@ -18,7 +18,7 @@ export default function Header({ handleSearchResult, onLogoClick }: Props) {
 
   return (
     <header className="">
-      <div className=" px-4 py-2 grid grid-cols-[auto_auto_1fr] items-center gap-2  text-logo-color">
+      <div className=" px-4 py-2 grid grid-cols-[auto_auto_1fr] items-center gap-2  text-logo-color s">
         {/* Left: Logo / future sidebar entry */}
         <a
           href="/"
@@ -88,7 +88,7 @@ export default function Header({ handleSearchResult, onLogoClick }: Props) {
               <circle cx="1045.1" cy="318.7" r="81.4" />
             </g>
           </svg>
-          <div className="flex items-baseline">
+          <div className="flex items-baseline ">
             <span className="text-lg ml-2">N</span>
             <span>OVO</span>
             <span className="text-lg ml-2">C</span>

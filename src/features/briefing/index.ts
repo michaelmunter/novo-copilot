@@ -1,2 +1,13 @@
 export { default as Briefing } from './Briefing'
-export type { Brief } from './types'
+export { default as SubBrief } from './subBrief/SubBrief'
+export type {
+  BriefingData,
+  SubBriefData,
+  TextContent,
+  TableContent,
+  ChartContent,
+  MetricsContent,
+  ListContent,
+  ComparisonContent,
+} from './types'
+export { getMockBriefingById, MOCK_BRIEFINGS } from './mockNew'
