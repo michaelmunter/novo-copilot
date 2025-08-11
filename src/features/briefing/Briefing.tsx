@@ -13,13 +13,9 @@ export default function Briefing({ briefId }: Props) {
   const { speak, stop, isSpeaking } = useBriefingTTS()
 
   useEffect(() => {
-    console.log('Briefing received briefId:', briefId)
-    console.log('Available mock IDs:', Object.keys(MOCK_BRIEFINGS))
     if (briefId && MOCK_BRIEFINGS[briefId]) {
-      console.log('Found briefing:', MOCK_BRIEFINGS[briefId])
       setBriefing(MOCK_BRIEFINGS[briefId])
     } else {
-      console.log('No briefing found for ID:', briefId)
       setBriefing(null)
     }
   }, [briefId])
@@ -44,7 +40,7 @@ export default function Briefing({ briefId }: Props) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="w-full max-w-4xl p-6">
       {/* Header with TTS */}
       <header className="mb-8">
         <div className="flex items-center justify-between">

@@ -123,8 +123,8 @@ export default function Header({ handleSearchResult, onLogoClick }: Props) {
           </button>
         </div>
         {/* Search container that takes full remaining width and centers content */}
-        <div className="flex justify-center">
-          <div className="w-full max-w-4xl">
+        <div className="flex justify-center w-full">
+          <div className="w-full max-w-4xl px-6">
             <Search onSearchResult={handleSearchResult} />
           </div>
         </div>
