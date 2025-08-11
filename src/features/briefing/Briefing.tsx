@@ -57,7 +57,7 @@ export default function Briefing({ briefId }: Props) {
             onClick={handleTTS}
             aria-pressed={isSpeaking}
             aria-label={isSpeaking ? 'Stop reading' : 'Read briefing aloud'}
-            className="px-3 py-1.5 rounded-md text-accent hover:bg-accent hover:text-text-hover"
+            className="px-3 py-1.5 rounded-md text-primary hover:bg-accent hover:text-text-hover"
           >
             {isSpeaking ? (
               <svg

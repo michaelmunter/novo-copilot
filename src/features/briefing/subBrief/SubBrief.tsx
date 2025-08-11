@@ -8,7 +8,7 @@ import ComparisonContentComponent from './components/ComparisonContent'
 
 const SubBrief = ({ data }: { data: SubBriefData }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-border p-4 mb-4">
+    <div className="bg-bg-secondary rounded-lg shadow-sm border border-border p-4 mb-4">
       <h3 className="font-semibold text-text-primary mb-3">{data.title}</h3>
       <SubBriefContent
         type={data.type}
