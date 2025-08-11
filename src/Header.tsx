@@ -22,7 +22,7 @@ export default function Header({ handleSearchResult, onLogoClick }: Props) {
         {/* Left: Logo / future sidebar entry */}
         <a
           href="/"
-          className="flex items-center text-lg"
+          className="flex items-center text-lg hover:scale-105 transition-transform duration-200 ease-out cursor-pointer"
           onClick={handleLogoClick}
         >
           <svg
