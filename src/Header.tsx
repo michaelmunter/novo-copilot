@@ -22,7 +22,7 @@ export default function Header({ handleSearchResult, onLogoClick }: Props) {
         {/* Left: Logo / future sidebar entry */}
         <a
           href="/"
-          className="flex items-center text-lg hover:scale-105 transition-transform duration-200 ease-out cursor-pointer"
+          className="flex items-center text-lg hover:scale-102 transition-transform duration-200 ease-out cursor-pointer"
           onClick={handleLogoClick}
         >
           <svg
@@ -89,8 +89,8 @@ export default function Header({ handleSearchResult, onLogoClick }: Props) {
             </g>
           </svg>
           <div className="flex items-baseline ">
-            <span className="text-lg ml-2">N</span>
-            <span>OVO</span>
+            <span className="text-lg ml-2">P</span>
+            <span>HARMA</span>
             <span className="text-lg ml-2">C</span>
             <span>O</span>
             <span className="text-lg">P</span>

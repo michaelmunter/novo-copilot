@@ -1,4 +1,4 @@
-export type BriefTab = 'brief' | 'dashboard' | 'profile' | 'interactions'
+export type BriefTab = 'brief' | 'dashboard' | 'hcp-profile' | 'interactions'
 
 type Props = {
   active: BriefTab
@@ -15,7 +15,7 @@ const NAV_ITEMS: Array<{
 }> = [
   { key: 'brief', label: 'AI Brief', enabled: true },
   { key: 'dashboard', label: 'Dashboard', enabled: false },
-  { key: 'profile', label: 'Profile', enabled: false },
+  { key: 'hcp-profile', label: 'HCP Profile', enabled: false },
   { key: 'interactions', label: 'Interactions', enabled: false },
 ]
 
@@ -38,7 +38,7 @@ export default function Sidebar({
                 ? isActive
                   ? 'bg-accent text-text-hover'
                   : 'hover:bg-accent hover:text-text-hover text-text-primary'
-                : 'text-text-secondary hover:text-text-hover cursor-not-allowed opacity-50'
+                : 'text-text-secondary hover:text-text-primary cursor-not-allowed opacity-50'
               return (
                 <li key={item.key}>
                   <button
